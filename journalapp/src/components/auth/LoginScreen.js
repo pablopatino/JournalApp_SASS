@@ -1,5 +1,5 @@
 import React from 'react'
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 import { Link} from 'react-router-dom'
 import { startGoogleLogin, startloginEmailPassword } from '../../actions/auth';
@@ -9,10 +9,14 @@ export const LoginScreen = () => {
 
     const dispatch = useDispatch()
 
+    const {loading} = useSelector( state => state.ui );
+   
+   
+
 
     const [ formularios, manejarFormulario ] = useForm({
-        email:'pablopatino97@hotmail.com',
-        password: '12345'
+        email:'pablopatino@gmail.com',
+        password: '12345678'
     });
 
     const { email, password } = formularios;
@@ -20,15 +24,14 @@ export const LoginScreen = () => {
 
     const handleLogin = (e) => {
         e.preventDefault();
-        
         dispatch( startloginEmailPassword( email, password ) )
 
     }
 
     const handleGoogleLogin = () => {
         dispatch(startGoogleLogin());
-    }
 
+    }
 
 
     
@@ -57,14 +60,15 @@ export const LoginScreen = () => {
                 />
 
              
-                <button
-                    type="submit"
-                    className="btn btn-primary btn-block"
-                    
-                > 
-                    Login
-                </button>
-
+               
+                    <button
+                        type="submit"
+                        className="btn btn-primary btn-block"
+                        disabled = { loading }
+                    > 
+                        Login
+                    </button>
+                
         
 
                 <div className="auth__social-networks">

@@ -1,5 +1,7 @@
-import React from 'react'
-import { useSelector } from 'react-redux'
+import React, { useEffect, useRef } from 'react'
+
+import { useDispatch, useSelector } from 'react-redux'
+import { activeNotes, startDeleting } from '../../actions/notes'
 import { useForm } from '../../hooks/useForm'
 import { NotesAppBar } from './NotesAppBar'
 
@@ -8,10 +10,38 @@ import { NotesAppBar } from './NotesAppBar'
 export const NoteScreen = () => {
 
     const { active:note } = useSelector(state => state.notes)
+    const [ formularios, manejarFormulario, reset ] = useForm( note )
+    const { body, title, id } = formularios; 
 
-    const [ formularios, manejarFormulario ] = useForm( note )
+    const activeId = useRef( note.id )
 
-    const { body, title } = formularios; 
+    const dispatch = useDispatch()
+
+    useEffect(() => {
+        
+        if( note.id !== activeId.current ){
+            reset( note )
+            activeId.current = note.id
+        }
+
+
+    }, [note, reset])
+
+
+    useEffect(() => {
+        
+        dispatch( activeNotes( formularios.id, { ...formularios } ) )
+ 
+    }, [ formularios, dispatch ])
+
+
+    const handleDelete= () => {
+        dispatch( startDeleting( id ) )
+    }
+
+
+
+
     return (
         <div className="notes__main-content">
             
@@ -24,13 +54,15 @@ export const NoteScreen = () => {
                     placeholder="Some Awesome"
                     className="notes__title-input"
                     value = { title }
+                    name =  "title"
                     onChange= { manejarFormulario }
                 />
 
                 <textarea
                     placeholder="What happened"
                     className="notas__textarea"
-                    value = {body }                  
+                    value = { body }
+                    name = "body"                 
                     onChange= { manejarFormulario }                     
                 >
 
@@ -38,16 +70,21 @@ export const NoteScreen = () => {
 
                     {
                         (note.url) &&
+                        
                         (
                             <div className="notes__image">
                                 <img 
-                                    src="https://helpx.adobe.com/content/dam/help/en/photoshop/using/convert-color-image-black-white/jcr_content/main-pars/before_and_after/image-before/Landscape-Color.jpg"
+                                    src={ note.url }
                                     alt="imagen"
                                 />
                             </div>
                         )            
                     }
             </div>
+
+            <button className= "btn btn-danger" onClick={ handleDelete }>
+                    Delete
+            </button>
 
         </div>
     )

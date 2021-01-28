@@ -5,7 +5,7 @@ export const useForm = ( initialState = {} ) => {
     const [formularios, setformularios] = useState( initialState )
 
 
-    const reset = () => {
+    const reset = ( newFormState = initialState ) => {
         setformularios( initialState )
     }
 
